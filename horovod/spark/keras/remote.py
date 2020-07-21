@@ -140,7 +140,15 @@ def RemoteTrainer(estimator, metadata, keras_utils, run_id, dataset_idx):
                 ckpt_file = os.path.join(run_output_dir, remote_store.checkpoint_filename)
                 logs_dir = os.path.join(run_output_dir, remote_store.logs_subdir)
 
-                callbacks.append(k.callbacks.ModelCheckpoint(ckpt_file))
+                has_model_checkpoint_in_callbacks = False
+                for callback in callbacks:
+                    if isinstance(callback, k.callbacks.ModelCheckpoint):
+                        callback.filepath = ckpt_file
+                        has_model_checkpoint_in_callbacks = True
+
+                if not has_model_checkpoint_in_callbacks:
+                    callbacks.append(k.callbacks.ModelCheckpoint(ckpt_file))
+
                 if remote_store.saving_runs:
                     tensorboard_kwargs = {}
                     if LooseVersion('1.15.0') > LooseVersion(tf.__version__) >= LooseVersion('1.14.0'):
