@@ -160,8 +160,8 @@ class KerasEstimator(HorovodEstimator, KerasEstimatorParamsReadable,
 
     custom_objects = Param(Params._dummy(), 'custom_objects', 'custom objects')
     _keras_pkg_type = Param(Params._dummy(), '_keras_pkg_type', 'keras package type')
-    model_checkpoint_callback_fn = Param(Params._dummy(), 'model_checkpoint_callback_fn',
-                                         'callback to checkpoint the model')
+    checkpoint_callback_fn = Param(Params._dummy(), 'checkpoint_callback_fn',
+                                   'callback to checkpoint the model')
 
     @keyword_only
     def __init__(self,
@@ -252,11 +252,11 @@ class KerasEstimator(HorovodEstimator, KerasEstimatorParamsReadable,
     def getCustomObjects(self):
         return self.getOrDefault(self.custom_objects)
 
-    def setModelCheckpointCallbackFn(self, value):
-        return self._set(model_checkpoint_callback_fn=value)
+    def setCheckpointCallbackFn(self, value):
+        return self._set(checkpoint_callback_fn=value)
 
-    def getModelCheckpointCallbackFn(self):
-        return self.getOrDefault(self.model_checkpoint_callback_fn)
+    def getCheckpointCallbackFn(self):
+        return self.getOrDefault(self.checkpoint_callback_fn)
 
     def _check_metadata_compatibility(self, metadata):
         input_shapes, output_shapes = self.get_model_shapes()

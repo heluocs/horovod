@@ -46,9 +46,9 @@ def RemoteTrainer(estimator, metadata, keras_utils, run_id, dataset_idx):
     should_validate = estimator.getValidation()
     user_shuffle_buffer_size = estimator.getShufflingBufferSize()
     user_verbose = estimator.getVerbose()
-    model_checkpoint_callback_fn = estimator.getModelCheckpointCallback()
-    model_checkpoint_callback = model_checkpoint_callback_fn() if \
-        model_checkpoint_callback_fn else _model_checkpoint_callback_fn()
+    checkpoint_callback_fn = estimator.getCheckpointCallbackFn()
+    checkpoint_callback = \
+        checkpoint_callback_fn() if checkpoint_callback_fn else _checkpoint_callback_fn()
 
     # Data reader parameters
     train_reader_worker_count = estimator.getTrainReaderNumWorker()
@@ -145,7 +145,7 @@ def RemoteTrainer(estimator, metadata, keras_utils, run_id, dataset_idx):
 
                 # This callback checkpoints the model that ultimately is wrapped and returned after
                 # Estimator.fit is called.
-                callbacks.append(model_checkpoint_callback(k, ckpt_file))
+                callbacks.append(checkpoint_callback(k, ckpt_file))
 
                 if remote_store.saving_runs:
                     tensorboard_kwargs = {}
@@ -331,7 +331,7 @@ def _pin_cpu_tensorflow1_fn():
     return fn
 
 
-def _model_checkpoint_callback_fn():
+def _checkpoint_callback_fn():
     # Returns a function that constructs a ModelCheckpoint callback
     def fn(keras, ckpt_file):
         return keras.callbacks.ModelCheckpoint(ckpt_file)
